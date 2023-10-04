@@ -3,7 +3,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const errorMiddleware = require('./src/middleware/errorMiddleware');
 const tokenMiddleware = require('./src/middleware/tokenMiddleware');
-const router = require('./src/routes/router');
+const healthRouter = require('./src/routes/healthRouter');
+const assignmentsRouter = require('./src/routes/assignmentsRouter');
 const { sequelize } = require('./src/utilities/connection');
 
 dotenv.config();
@@ -16,10 +17,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(async (req, res, next) => {
+    try {
+        await sequelize.authenticate();
+        next();
+    } catch (error) {
+        console.error('Database connection error:', error);
+        res.status(503).send();
+    }
+});
+
+app.use('/healthz', healthRouter);
 app.use(tokenMiddleware);
-
-app.use('/vi/assignments', router);
-
+app.use('/vi/assignments', assignmentsRouter);
 app.use(errorMiddleware);
 
 sequelize
@@ -32,9 +42,6 @@ sequelize
     })
     .catch((error) => {
         console.error('Database connection error:', error);
-        app.use((req, res) => {
-            res.status(503).end();
-        });
         app.listen(port, () => {
             console.log(`Server listening on port ${port}`);
         });
