@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "github-actions" ]
   pull_request:
     branches: [ "main" ]
 
@@ -13,6 +13,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    defaults: 
+      run: 
+        working-directory: ./AssignmentsAPI/
 
     strategy:
       matrix:
@@ -21,6 +24,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install MySQL client
+      run: |
+        sudo apt-get update
+        sudo apt-get install mysql-client
+
+    - name: Initalize MySQL
+      run : sudo systemctl start mysql.service
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
