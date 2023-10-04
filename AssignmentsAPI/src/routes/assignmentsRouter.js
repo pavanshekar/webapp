@@ -109,5 +109,8 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
+router.patch('/:id', (req, res) => {
+    throw new Error('Method Not Allowed');
+});
 
 module.exports = router;

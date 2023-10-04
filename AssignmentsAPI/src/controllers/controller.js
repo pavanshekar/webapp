@@ -53,7 +53,7 @@ controller.deleteAssignmentById = async (assignmentId, token) => {
     const assignment = await Assignment.findByPk(assignmentId);
 
     if (!assignment) {
-        return null;
+        throw new Error('Assignment not found');
     }
 
     await authenticateUserByToken(token, assignmentId);
@@ -61,7 +61,7 @@ controller.deleteAssignmentById = async (assignmentId, token) => {
     const userAssignment = await UserAssignment.findOne({ where: { assignmentId: assignmentId } });
 
     if (!userAssignment) {
-        return null;
+        throw new Error('Assignment not found');
     }
 
     await userAssignment.destroy();

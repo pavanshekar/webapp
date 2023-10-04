@@ -9,6 +9,8 @@ module.exports = (err, req, res, next) => {
         res.status(403).send();
     } else if (err.message === 'Assignment not found') {
         res.status(404).send();
+    } else if (err.message === 'Method Not Allowed') {
+        res.status(405).send();
     } else {
         console.log(err);
         res.status(500).send();
