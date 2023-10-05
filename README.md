@@ -36,9 +36,9 @@ Before you can build and deploy this web application locally, ensure you have th
 ## Build and Deploy Instructions
 Follow these steps to build and deploy the web application locally:
 
-1. Clone the repository to your local machine:
+1.Clone the repository to your local machine:
    
-         git clone <repo>
+      git clone <repo>
 
 2.Navigate to the project directory:
 
