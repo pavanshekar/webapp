@@ -9,7 +9,7 @@ Before you can build and deploy this web application locally, ensure you have th
 
 ### Development Environment
 - Operating System (e.g., Windows, macOS, Linux)
-- Code Editor or Integrated Development Environment (IDE) (e.g., Visual Studio Code, Sublime Text, IntelliJ IDEA)
+- Code Editor or Integrated Development Environment (IDE) (e.g., Visual Studio Code, Sublime Text)
 
 ### Version Control
 - Git: Install Git from [https://git-scm.com/](https://git-scm.com/).
