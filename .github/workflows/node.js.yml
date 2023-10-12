@@ -12,6 +12,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: pavan
+          MYSQL_DATABASE: AssignmentsDb
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    
     defaults:
       run:
         working-directory: ./AssignmentsAPI/
@@ -25,22 +35,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Install MySQL client
-        run: |
-          sudo apt-get update
-          sudo apt-get install mysql-client
-
-      - name: Initialize MySQL
-        run: sudo systemctl start mysql.service
-
+      
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: ./AssignmentsAPI/package-lock.json
-
+      
       - name: Install Dependencies
         run: npm ci
 
@@ -49,3 +51,11 @@ jobs:
 
       - name: Run Tests
         run: npm test
+        env:
+          PORT: 8080
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: pavan
+          DB_DATABASE: AssignmentsDb
+          SECRET_KEY: 8af6b2e9dc49c756f2d44e6f71a7d7e6
