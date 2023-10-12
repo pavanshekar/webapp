@@ -9,12 +9,12 @@ const path = require('path');
 dotenv.config();
 
 const sequelize = new Sequelize({
-    dialect: 'mariadb',
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
+    dialect: 'mysql',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'pavan',
+    database: 'AssignmentsDb',
 });
 
 const User = sequelize.define('User', {
@@ -52,6 +52,11 @@ const Assignment = sequelize.define('Assignment', {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
+            isInt: function (value) {
+                if (!Number.isInteger(value)) {
+                    throw new Error('Bad Request');
+                }
+            },
             min: 1,
             max: 10,
         },
@@ -59,10 +64,24 @@ const Assignment = sequelize.define('Assignment', {
     num_of_attempts: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+            isInt: function (value) {
+                if (!Number.isInteger(value)) {
+                    throw new Error('Bad Request');
+                }
+            },
+        },
     },
     deadline: {
         type: DataTypes.DATE,
         allowNull: false,
+        validate: {
+            isDate: function (value) {
+                if (isNaN(Date.parse(value))) {
+                    throw new Error('Bad Request');
+                }
+            },
+        },
     },
 }, {
     timestamps: true,

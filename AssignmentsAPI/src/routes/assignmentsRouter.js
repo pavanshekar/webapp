@@ -31,6 +31,15 @@ router.post('/', async (req, res, next) => {
             return res.status(401).end();
         }
 
+        const expectedFields = ["name", "points", "num_of_attempts", "deadline"];
+        const requestBodyKeys = Object.keys(req.body);
+
+        const extraFields = requestBodyKeys.filter(field => !expectedFields.includes(field));
+
+        if (extraFields.length > 0) {
+            return res.status(400).end();
+        }
+
         const assignmentData = {
             name: req.body.name,
             points: req.body.points,
@@ -97,6 +106,15 @@ router.put('/:id', async (req, res, next) => {
     const token = req.headers.authorization;
 
     try {
+        const expectedFields = ["name", "points", "num_of_attempts", "deadline"];
+        const requestBodyKeys = Object.keys(req.body);
+
+        const extraFields = requestBodyKeys.filter(field => !expectedFields.includes(field));
+
+        if (extraFields.length > 0) {
+            return res.status(400).end();
+        }
+
         const assignment = await controller.updateAssignment(assignmentId, assignmentData, token);
 
         if (!assignment) {
