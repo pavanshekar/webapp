@@ -16,12 +16,10 @@ sudo apt install -y unzip mariadb-server
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# Setup MariaDB
-sudo mysql_secure_installation
-
-echo "grant all on *.* to '${DB_USER}'@'localhost' with grant option;" | sudo mariadb
-echo "flush privileges;" | sudo mariadb
-echo "create database if not exists '${DB_DATABASE}';" | sudo mariadb
+sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY '${DB_PASSWORD}';"
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS '${DB_DATABASE}';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON ${DB_DATABASE}.* TO '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';"
+sudo mysql -e "FLUSH PRIVILEGES;"
 
 # Extract and set up the application
 mkdir -p /opt/AssignmentsAPI
