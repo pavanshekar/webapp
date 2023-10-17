@@ -5,10 +5,6 @@ if [ -f .env ]; then
   export $(cat .env | xargs)
 fi
 
-# Print the values of DB_USER and DB_PASSWORD for verification
-echo "DB_USER: ${DB_USER}"
-echo "DB_PASSWORD: ${DB_PASSWORD}"
-
 # Update packages
 sudo apt update 
 sudo apt upgrade -y
@@ -28,7 +24,7 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 # Extract and set up the application
 sudo mkdir -p /opt/AssignmentsAPI
 sudo unzip /tmp/app.zip -d /opt/AssignmentsAPI
-sudo cd /opt/AssignmentsAPI
+cd /opt/AssignmentsAPI
 sudo npm install
 
 # Clean up
