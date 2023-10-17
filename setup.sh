@@ -5,6 +5,7 @@ if [ -f .env ]; then
   export $(cat .env | xargs)
 fi
 
+echo "DB_USER: $DB_USER"
 echo "DB_PASSWORD: $DB_PASSWORD"
 echo "DB_DATABASE: $DB_DATABASE"
 
@@ -18,7 +19,7 @@ sudo apt install -y mariadb-server
 
 printf "%s\nno\nno\nyes\nyes\nyes\nyes\n" "$DB_PASSWORD" | sudo mysql_secure_installation -p$DB_PASSWORD
 
-sudo mariadb -u root -p$DB_PASSWORD -e "CREATE DATABASE $DB_DATABASE;"
+sudo mysql -u root -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;"
 
 sudo apt install -y unzip
 

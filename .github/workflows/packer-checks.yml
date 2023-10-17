@@ -32,4 +32,5 @@ jobs:
       env:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_USER: ${{ secrets.DB_USER }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
       run: packer validate aws-debian.pkr.hcl
