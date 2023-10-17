@@ -12,6 +12,21 @@ variable "aws_region" {
   default = "us-east-2"
 }
 
+variable "DB_PASSWORD" {
+  type        = string
+  default     = env("DB_PASSWORD")
+  description = "Database password"
+  sensitive   = true
+}
+
+variable "DB_USER" {
+  type        = string
+  default     = env("DB_USER")
+  description = "Database user"
+  sensitive   = true
+}
+
+
 variable "instance_type" {
   type    = string
   default = "t2.micro"
@@ -67,6 +82,8 @@ build {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1",
+      "DB_PASSWORD=${var.DB_PASSWORD}",
+      "DB_USER=${var.DB_USER}"
     ]
     script = "./setup.sh"
   }
