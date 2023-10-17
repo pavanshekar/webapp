@@ -41,6 +41,8 @@ source "amazon-ebs" "my-ami" {
     "us-east-2",
   ]
 
+  ami_users = ["656935817935", "565864190124"]
+
   aws_polling {
     delay_seconds = 120
     max_attempts  = 50
