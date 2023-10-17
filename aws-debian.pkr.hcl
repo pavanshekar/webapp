@@ -16,14 +16,18 @@ variable "DB_PASSWORD" {
   type        = string
   default     = env("DB_PASSWORD")
   description = "Database password"
-  sensitive   = true
 }
 
 variable "DB_USER" {
   type        = string
   default     = env("DB_USER")
   description = "Database user"
-  sensitive   = true
+}
+
+variable "DB_DATABASE" {
+  type        = string
+  default     = env("DB_DATABASE")
+  description = "Database name"
 }
 
 
@@ -83,7 +87,8 @@ build {
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1",
       "DB_PASSWORD=${var.DB_PASSWORD}",
-      "DB_USER=${var.DB_USER}"
+      "DB_USER=${var.DB_USER}",
+      "DB_DATABASE=${var.DB_DATABASE}",
     ]
     script = "./setup.sh"
   }

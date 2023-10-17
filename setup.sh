@@ -5,6 +5,9 @@ if [ -f .env ]; then
   export $(cat .env | xargs)
 fi
 
+echo "DB_PASSWORD: $DB_PASSWORD"
+echo "DB_DATABASE: $DB_DATABASE"
+
 sudo apt update 
 sudo apt upgrade -y
 
