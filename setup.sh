@@ -24,7 +24,7 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 # Extract and set up the application
 sudo mkdir -p /opt/AssignmentsAPI
 sudo unzip /tmp/app.zip -d /opt/AssignmentsAPI
-cd /opt/AssignmentsAPI
+cd /opt/AssignmentsAPI/AssignmentsAPI
 sudo npm install
 
 # Clean up
