@@ -1,0 +1,45 @@
+name: Packer CI - AMI Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Archive the Repository
+      run: |
+        zip -r app.zip AssignmentsAPI
+
+    - name: Setup Packer
+      run: |
+        curl -Lo packer.zip https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
+        unzip packer.zip
+        sudo mv packer /usr/local/bin/
+
+    - name: Initialize Packer
+      run: packer init aws-debian.pkr.hcl
+
+    - name: Build AMI
+      env:
+        AWS_DEFAULT_REGION: us-east-2
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_USER: ${{ secrets.DB_USER }}
+      run: packer build aws-debian.pkr.hcl
+
+    - name: Retrieve AMI ID
+      id: retrieve-ami-id
+      run: |
+        AMI_ID=$(aws ec2 describe-images --filters "Name=tag:BuiltBy,Values=GitHubActions-${GITHUB_RUN_ID}" --query "Images[0].ImageId" --output text)
+        echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+
+    - name: Share AMI with DEMO Account
+      run: |
+        DEMO_ACCOUNT_ID="565864190124"
+        aws ec2 modify-image-attribute --image-id $AMI_ID --launch-permission "Add=[{UserId=$DEMO_ACCOUNT_ID}]"
