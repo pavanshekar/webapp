@@ -14,19 +14,22 @@ sudo apt-get install -y nodejs
 
 sudo apt install -y mariadb-server
 
-printf "%s\nno\nno\nyes\nyes\nyes\nyes\n" "$DB_PASSWORD" | sudo mysql_secure_installation -p$DB_PASSWORD
+# Logging into MariaDB and changing the root password
+sudo mysql -u root <<-EOF
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$DB_PASSWORD');
+FLUSH PRIVILEGES;
+EOF
 
 # Check if we can log in with the given root password
-mysql -u root -p"$DB_PASSWORD" -e "exit" || (echo "Failed to login with root password!" && exit 1)
+mysql -u root -p"$DB_PASSWORD" -e "exit" || echo "Failed to login with root password!"
 
-echo "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;" | sudo mariadb
-echo "FLUSH PRIVILEGES;" | sudo mariadb
+# Create the database
+mysql -u root -p"$DB_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;"
 
 # Check if the database was created
 DATABASE_EXISTS=$(mysql -u root -p"$DB_PASSWORD" -e "SHOW DATABASES LIKE '$DB_DATABASE';" | grep "$DB_DATABASE")
 if [ -z "$DATABASE_EXISTS" ]; then
     echo "Database $DB_DATABASE does not exist!"
-    exit 1
 fi
 
 sudo apt install -y unzip
