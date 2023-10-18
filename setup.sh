@@ -14,6 +14,8 @@ sudo apt-get install -y nodejs
 
 sudo apt install -y mariadb-server
 
+sudo systemctl start mariadb
+
 sudo mysql -u root <<-EOF
 SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$DB_PASSWORD');
 FLUSH PRIVILEGES;

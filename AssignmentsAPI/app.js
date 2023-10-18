@@ -13,7 +13,7 @@ const app = express();
 
 const port = process.env.PORT || 8080;
 
-if(process.env.DB_DATABASE == "AssignmentsDb"){
+if(process.env.DB_DATABASE == "AssignmentsDb" && process.env.DB_USER == "root" && process.env.DB_HOST == "localhost" && process.env.DB_PASSWORD == "pavan"){
     console.log("Env accessible!!!");
 }
 
