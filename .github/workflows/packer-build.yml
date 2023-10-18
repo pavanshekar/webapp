@@ -11,6 +11,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Archive the Repository
+      run: |
+        zip -r app.zip AssignmentsAPI
+
     - name: Create .env
       run: |
         echo PORT=${{ secrets.PORT }} >> .env
@@ -20,14 +24,10 @@ jobs:
         echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
         echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
         echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-
-    - name: Archive the Repository
-      run: |
-        zip -r app.zip AssignmentsAPI
     
     - name: Setup Packer
       run: |
-        curl -Lo packer.zip https://releases.hashicorp.com/packer/latest/packer_latest_linux_amd64.zip
+        curl -Lo packer.zip https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
         unzip packer.zip
         sudo mv packer /usr/local/bin/
 
