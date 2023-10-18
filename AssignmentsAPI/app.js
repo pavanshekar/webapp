@@ -13,8 +13,24 @@ const app = express();
 
 const port = process.env.PORT || 8080;
 
-if(process.env.DB_DATABASE == "AssignmentsDb" && process.env.DB_USER == "root" && process.env.DB_HOST == "localhost" && process.env.DB_PASSWORD == "pavan"){
-    console.log("Env accessible!!!");
+if(process.env.DB_DATABASE == "AssignmentsDb"){
+    console.log("Db accessible!!!");
+}
+
+if(process.env.DB_USER == "root"){
+    console.log("User ");
+}
+
+if(process.env.DB_HOST == "localhost"){
+    console.log("Host: ");
+}
+
+if(process.env.DB_PASSWORD == "pavan"){
+    console.log("Pwd: ");
+}
+
+if(process.env.DB_PORT == "3306"){
+    console.log("DB-PORT");
 }
 
 app.use(cors());
