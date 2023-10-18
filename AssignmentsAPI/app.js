@@ -13,30 +13,6 @@ const app = express();
 
 const port = process.env.PORT || 8080;
 
-if(process.env.DB_DATABASE == "AssignmentsDb"){
-    console.log("Db accessible!!!");
-}
-
-if(process.env.DB_USER == "root"){
-    console.log("User ");
-}
-
-if(process.env.DB_HOST == "localhost"){
-    console.log("Host: ");
-}
-
-if(process.env.DB_PASSWORD == "pavan"){
-    console.log("Pwd: ");
-}
-
-if(process.env.DB_PORT == "3306"){
-    console.log("DB-PORT");
-}
-
-if(process.env.SECRET_KEY == "8af6b2e9dc49c756f2d44e6f71a7d7e6"){
-    console.log("key: !!!!");
-}
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
