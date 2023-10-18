@@ -13,6 +13,10 @@ const app = express();
 
 const port = process.env.PORT || 8080;
 
+if(process.env.DB_DATABASE == "AssignmentsDb"){
+    console.log("Env accessible!!!");
+}
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
