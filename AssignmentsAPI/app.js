@@ -33,6 +33,10 @@ if(process.env.DB_PORT == "3306"){
     console.log("DB-PORT");
 }
 
+if(process.env.SECRET_KEY == "8af6b2e9dc49c756f2d44e6f71a7d7e6"){
+    console.log("key: !!!!");
+}
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

@@ -12,6 +12,20 @@ variable "aws_region" {
   default = "us-east-2"
 }
 
+variable "PORT" {
+  type        = string
+  default     = env("PORT")
+  description = "Port"
+  sensitive   = true
+}
+
+variable "SECRET_KEY" {
+  type        = string
+  default     = env("SECRET_KEY")
+  description = "Secret key"
+  sensitive   = true
+}
+
 variable "DB_PASSWORD" {
   type        = string
   default     = env("DB_PASSWORD")
@@ -30,6 +44,20 @@ variable "DB_DATABASE" {
   type        = string
   default     = env("DB_DATABASE")
   description = "Database name"
+  sensitive   = true
+}
+
+variable "DB_HOST" {
+  type        = string
+  default     = env("DB_HOST")
+  description = "Database host"
+  sensitive   = true
+}
+
+variable "DB_PORT" {
+  type        = string
+  default     = env("DB_PORT")
+  description = "Database port"
   sensitive   = true
 }
 
@@ -87,9 +115,13 @@ build {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1",
+      "PORT=${var.PORT}",
       "DB_PASSWORD=${var.DB_PASSWORD}",
       "DB_USER=${var.DB_USER}",
       "DB_DATABASE=${var.DB_DATABASE}",
+      "DB_HOST=${var.DB_HOST}",
+      "DB_PORT=${var.DB_PORT}",
+      "SECRET_KEY=${var.SECRET_KEY}",
     ]
     script = "./setup.sh"
   }
