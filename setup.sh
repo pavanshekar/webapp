@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ -f .env ]; then
   export $(cat .env | xargs)
 fi
@@ -22,8 +24,8 @@ sudo apt install -y unzip
 sudo mkdir -p /opt/AssignmentsAPI
 sudo unzip /tmp/app.zip -d /opt/AssignmentsAPI
 cd /opt/AssignmentsAPI/AssignmentsAPI
-
 sudo npm install
-# node app.js
+
+node app.js
 
 sudo apt-get clean

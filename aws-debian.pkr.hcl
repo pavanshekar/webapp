@@ -33,7 +33,6 @@ variable "DB_DATABASE" {
   sensitive   = true
 }
 
-
 variable "instance_type" {
   type    = string
   default = "t2.micro"
@@ -55,7 +54,7 @@ variable "subnet_id" {
 }
 
 source "amazon-ebs" "my-ami" {
-  region          = "${var.aws_region}"
+  region          = var.aws_region
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for csye 6225"
 
@@ -70,11 +69,10 @@ source "amazon-ebs" "my-ami" {
     max_attempts  = 50
   }
 
-  instance_type = "${var.instance_type}"
-  source_ami    = "${var.source_ami}"
-  ssh_username  = "${var.ssh_username}"
-  subnet_id     = "${var.subnet_id}"
-
+  instance_type = var.instance_type
+  source_ami    = var.source_ami
+  ssh_username  = var.ssh_username
+  subnet_id     = var.subnet_id
 }
 
 build {
@@ -95,5 +93,4 @@ build {
     ]
     script = "./setup.sh"
   }
-
 }

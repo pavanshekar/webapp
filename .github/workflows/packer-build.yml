@@ -10,14 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
+    - name: Create .env
+      run: |
+        echo PORT=${{ secrets.PORT }} >> .env
+        echo DB_HOST=localhost >> .env
+        echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+        echo DB_USER=${{ secrets.DB_USER }} >> .env
+        echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+        echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
+        echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
     
     - name: Archive the Repository
-      run: |
-        zip -r app.zip AssignmentsAPI
+      run: zip -r app.zip AssignmentsAPI
 
     - name: Setup Packer
       run: |
-        curl -Lo packer.zip https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
+        curl -Lo packer.zip https://releases.hashicorp.com/packer/latest/packer_latest_linux_amd64.zip
         unzip packer.zip
         sudo mv packer /usr/local/bin/
 
@@ -38,19 +47,22 @@ jobs:
         DB_USER: ${{ secrets.DB_USER }}
         DB_DATABASE: ${{ secrets.DB_DATABASE }}
 
-
     - name: Retrieve AMI ID
       id: retrieve-ami-id
       run: |
         AMI_ID=$(aws ec2 describe-images --filters "Name=tag:BuiltBy,Values=GitHubActions-${GITHUB_RUN_ID}" --query "Images[0].ImageId" --output text)
         echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
-
-    - name: Share AMI with DEMO Account
-      run: |
-        DEMO_ACCOUNT_ID="565864190124"
-        aws ec2 modify-image-attribute --image-id ${{ env.AMI_ID }} --launch-permission "Add=[{UserId=$DEMO_ACCOUNT_ID}]"
       env:
         AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-        AMI_ID: ${{ env.AMI_ID }}
+
+    - name: Share AMI with DEMO Account
+      run: |
+        DEMO_ACCOUNT_ID="565864190124"
+        aws ec2 modify-image-attribute --image-id $AMI_ID --launch-permission "Add=[{UserId=$DEMO_ACCOUNT_ID}]"
+      env:
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AMI_ID: $AMI_ID
