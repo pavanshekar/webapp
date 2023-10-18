@@ -39,6 +39,9 @@ echo "SECRET_KEY=$SECRET_KEY" | sudo tee -a .env >/dev/null
 
 sudo npm install
 
-sudo node app.js
+sudo npm install -g pm2
+pm2 start app.js
+pm2 save
+pm2 startup | sudo bash
 
 sudo apt-get clean
