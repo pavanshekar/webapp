@@ -20,10 +20,11 @@ jobs:
         echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
         echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
         echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-    
-    - name: Archive the Repository
-      run: zip -r app.zip AssignmentsAPI
 
+    - name: Archive the Repository
+      run: |
+        zip -r app.zip AssignmentsAPI
+    
     - name: Setup Packer
       run: |
         curl -Lo packer.zip https://releases.hashicorp.com/packer/latest/packer_latest_linux_amd64.zip
@@ -52,17 +53,13 @@ jobs:
       run: |
         AMI_ID=$(aws ec2 describe-images --filters "Name=tag:BuiltBy,Values=GitHubActions-${GITHUB_RUN_ID}" --query "Images[0].ImageId" --output text)
         echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
-      env:
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
     - name: Share AMI with DEMO Account
       run: |
         DEMO_ACCOUNT_ID="565864190124"
-        aws ec2 modify-image-attribute --image-id $AMI_ID --launch-permission "Add=[{UserId=$DEMO_ACCOUNT_ID}]"
+        aws ec2 modify-image-attribute --image-id ${{ env.AMI_ID }} --launch-permission "Add=[{UserId=$DEMO_ACCOUNT_ID}]"
       env:
         AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-        AMI_ID: $AMI_ID
+        AMI_ID: ${{ env.AMI_ID }}
