@@ -111,6 +111,11 @@ build {
     destination = "/tmp/app.zip"
   }
 
+  provisioner "file" {
+    source      = "assignments-api.service"
+    destination = "/tmp/assignments-api.service"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
