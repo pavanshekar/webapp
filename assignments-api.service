@@ -1,0 +1,16 @@
+[Unit]
+Description=Assignments API Service
+After=network-online.target cloud-final.service
+Wants=network-online.target cloud-final.service
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/opt/AssignmentsAPI/AssignmentsAPI
+ExecStart=/usr/bin/node app.js
+EnvironmentFile=/opt/AssignmentsAPI/AssignmentsAPI/.env
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

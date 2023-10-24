@@ -12,17 +12,6 @@ sudo apt upgrade -y
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-sudo apt install -y mariadb-server
-
-sudo systemctl start mariadb
-
-sudo mysql -u root <<-EOF
-SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$DB_PASSWORD');
-FLUSH PRIVILEGES;
-EOF
-
-mysql -u root -p"$DB_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;"
-
 sudo apt install -y unzip
 
 sudo mkdir -p /opt/AssignmentsAPI
@@ -39,9 +28,7 @@ echo "SECRET_KEY=$SECRET_KEY" | sudo tee -a .env >/dev/null
 
 sudo npm install
 
-sudo npm install -g pm2
-pm2 start app.js
-pm2 save
-pm2 startup | sudo bash
-
-sudo apt-get clean
+sudo cp ./assignments-api.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable assignments-api
+sudo systemctl start assignments-api
