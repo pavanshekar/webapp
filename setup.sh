@@ -28,7 +28,7 @@ echo "SECRET_KEY=$SECRET_KEY" | sudo tee -a .env >/dev/null
 
 sudo npm install
 
-sudo cp ./assignments-api.service /etc/systemd/system/
+sudo cp $GITHUB_WORKSPACE/assignments-api.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable assignments-api
 sudo systemctl start assignments-api
