@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: >
+      (github.event_name == 'push' && github.repository == 'NEU-Cloud-CSYE6225/webapp') ||
+      (github.event_name == 'pull_request')
 
     services:
       mysql:

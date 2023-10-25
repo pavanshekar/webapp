@@ -26,41 +26,6 @@ variable "SECRET_KEY" {
   sensitive   = true
 }
 
-variable "DB_PASSWORD" {
-  type        = string
-  default     = env("DB_PASSWORD")
-  description = "Database password"
-  sensitive   = true
-}
-
-variable "DB_USER" {
-  type        = string
-  default     = env("DB_USER")
-  description = "Database user"
-  sensitive   = true
-}
-
-variable "DB_DATABASE" {
-  type        = string
-  default     = env("DB_DATABASE")
-  description = "Database name"
-  sensitive   = true
-}
-
-variable "DB_HOST" {
-  type        = string
-  default     = env("DB_HOST")
-  description = "Database host"
-  sensitive   = true
-}
-
-variable "DB_PORT" {
-  type        = string
-  default     = env("DB_PORT")
-  description = "Database port"
-  sensitive   = true
-}
-
 variable "instance_type" {
   type    = string
   default = "t2.micro"
