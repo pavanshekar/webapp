@@ -5,7 +5,7 @@
 - [Build and Deploy Instructions](#build-and-deploy-instructions)
 
 ## Prerequisites
-Before you can build and deploy this web application locally, ensure you have the following prerequisites in place:
+Before you can build and deploy this web application locally, ensure you have the following prerequisites in place: 
 
 ### Development Environment
 - Operating System (e.g., Windows, macOS, Linux)
