@@ -1,7 +1,7 @@
 [Unit]
 Description=Assignments API Service
-After=network.target
-Wants=network.target
+After=network.target cloud-init.target
+Wants=network.target cloud-init.target
 
 [Service]
 Type=simple
