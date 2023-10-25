@@ -8,7 +8,7 @@ Type=simple
 User=admin
 WorkingDirectory=/opt/AssignmentsAPI/AssignmentsAPI
 ExecStart=/usr/bin/node app.js
-EnvironmentFile=/etc/environment
+EnvironmentFile=/opt/AssignmentsAPI/AssignmentsAPI/.env
 Restart=on-failure
 RestartSec=10
 
