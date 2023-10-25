@@ -1,7 +1,7 @@
 [Unit]
 Description=Assignments API Service
-After=network-online.target cloud-final.service
-Wants=network-online.target cloud-final.service
+After=network.target
+Wants=network.target
 
 [Service]
 Type=simple
