@@ -121,11 +121,6 @@ build {
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1",
       "PORT=${var.PORT}",
-      "DB_PASSWORD=${var.DB_PASSWORD}",
-      "DB_USER=${var.DB_USER}",
-      "DB_DATABASE=${var.DB_DATABASE}",
-      "DB_HOST=${var.DB_HOST}",
-      "DB_PORT=${var.DB_PORT}",
       "SECRET_KEY=${var.SECRET_KEY}",
     ]
     script = "./setup.sh"
