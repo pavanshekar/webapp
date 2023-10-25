@@ -9,6 +9,14 @@ const { sequelize } = require('./src/utilities/connection');
 
 dotenv.config();
 
+console.log("DB_PORT: ", process.env.DB_PORT);
+console.log("DB_HOST: ", process.env.DB_HOST);
+console.log("DB: ", process.env.DB_DATABASE);
+console.log("DB_USER", process.env.DB_USER);
+console.log("DB_PASSWORD", process.env.DB_PASSWORD);
+console.log("PORT: ", process.env.PORT);
+console.log("SECRET KEY: ", process.env.SECRECT_KEY);
+
 const app = express();
 
 const port = process.env.PORT || 8080;
