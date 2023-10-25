@@ -5,7 +5,7 @@ Wants=network.target cloud-init.target
 
 [Service]
 Type=simple
-User=admin
+User=csye6225
 WorkingDirectory=/opt/AssignmentsAPI/AssignmentsAPI
 ExecStart=/usr/bin/node app.js
 EnvironmentFile=/opt/AssignmentsAPI/AssignmentsAPI/.env
