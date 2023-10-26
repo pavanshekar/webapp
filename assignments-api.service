@@ -1,6 +1,7 @@
 [Unit]
 Description=Assignments API Service
-After=cloud-final.service
+After=cloud-init.service
+Wants=cloud-init.service
 
 [Service]
 Type=simple

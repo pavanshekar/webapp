@@ -8,9 +8,6 @@ sudo apt upgrade -y
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-node -v
-npm -v
-
 sudo apt install -y unzip
 
 sudo mkdir -p /opt/AssignmentsAPI
