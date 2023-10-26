@@ -1,16 +1,16 @@
 [Unit]
 Description=Assignments API Service
-After=network.target cloud-init.target
-Wants=network.target cloud-init.target
+After=cloud-final.service
 
 [Service]
 Type=simple
 User=csye6225
+Group=csye6225
 WorkingDirectory=/opt/AssignmentsAPI/AssignmentsAPI
 ExecStart=/usr/bin/node app.js
 EnvironmentFile=/opt/AssignmentsAPI/AssignmentsAPI/.env
-Restart=on-failure
-RestartSec=10
+Restart=always
+RestartSec=30
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=cloud-init.target
