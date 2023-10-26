@@ -18,8 +18,8 @@ sudo unzip /tmp/app.zip -d /opt/AssignmentsAPI
 
 cd /opt/AssignmentsAPI/AssignmentsAPI
 
-sudo groupadd csye6225
-sudo useradd -s /bin/false -g csye6225 -d /opt/AssignmentsAPI/AssignmentsAPI -m csye6225
+sudo groupadd -f csye6225
+sudo useradd -s /bin/false -g csye6225 -d /opt/AssignmentsAPI/AssignmentsAPI csye6225 || true
 
 if [ -f .env ]; then
   export $(cat .env | xargs)
@@ -31,9 +31,7 @@ echo "SECRET_KEY=$SECRET_KEY" | sudo tee -a .env >/dev/null
 sudo chown -R csye6225:csye6225 /opt/AssignmentsAPI/AssignmentsAPI
 sudo chmod -R 755 /opt/AssignmentsAPI/AssignmentsAPI/
 
-sudo mkdir -p node_modules
-sudo chown csye6225:csye6225 node_modules
-npm install
+sudo -u csye6225 npm install
 
 sudo cp /tmp/assignments-api.service /etc/systemd/system/
 sudo systemctl daemon-reload
