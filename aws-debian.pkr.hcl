@@ -91,6 +91,15 @@ build {
     script = "./setup.sh"
   }
 
+  provisioner "shell" {
+    inline = [
+      "sudo apt-get update",
+      "curl -s https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb -o amazon-cloudwatch-agent.deb",
+      "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb",
+      "sudo apt-get install -f",
+    ]
+  }
+
   post-processor "manifest" {
     output     = "manifest.json"
     strip_path = true

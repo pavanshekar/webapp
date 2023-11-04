@@ -44,6 +44,11 @@ User.prototype.verifyCredentials = async function (password) {
 };
 
 const Assignment = sequelize.define('Assignment', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -93,9 +98,9 @@ const UserAssignment = sequelize.define('UserAssignment', {
         allowNull: false,
     },
     assignmentId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
-    },
+      },
     authToken: {
         type: DataTypes.STRING,
         allowNull: false,

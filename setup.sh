@@ -32,5 +32,8 @@ sudo -u csye6225 npm install
 
 sudo cp /tmp/assignments-api.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl start assignments-api
 sudo systemctl enable assignments-api
+sudo systemctl start assignments-api
+
+sudo systemctl enable amazon-cloudwatch-agent
+sudo systemctl start amazon-cloudwatch-agent
