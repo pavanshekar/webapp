@@ -38,10 +38,9 @@ sudo systemctl start assignments-api
 sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb
 sudo dpkg -i amazon-cloudwatch-agent.deb || sudo apt-get install -y -f
 
-if [ -f /etc/systemd/system/amazon-cloudwatch-agent.service ] || [ -f /lib/systemd/system/amazon-cloudwatch-agent.service ]; then
-  echo "CloudWatch Agent service file exists. Enabling and starting service..."
-  sudo systemctl enable amazon-cloudwatch-agent.service
-  sudo systemctl start amazon-cloudwatch-agent.service
-else
-  echo "Error: CloudWatch Agent service file does not exist."
-fi
+sudo mv /tmp/amazon-cloudwatch-agent.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+sudo chown csye6225:csye6225 /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+sudo chmod 755 /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+
+sudo systemctl enable amazon-cloudwatch-agent.service
+sudo systemctl start amazon-cloudwatch-agent.service
