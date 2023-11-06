@@ -6,6 +6,7 @@ const tokenMiddleware = require('./src/middleware/tokenMiddleware');
 const healthRouter = require('./src/routes/healthRouter');
 const assignmentsRouter = require('./src/routes/assignmentsRouter');
 const { sequelize } = require('./src/utilities/connection');
+const logger = require('./src/utilities/logger');
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ app.use(async (req, res, next) => {
         await sequelize.authenticate();
         next();
     } catch (error) {
-        console.error('Database connection error:', error);
+        logger.error('Database connection error:', error);
         res.status(503).send();
     }
 });
@@ -35,15 +36,15 @@ app.use(errorMiddleware);
 sequelize
     .authenticate()
     .then(() => {
-        console.log('Database connection established successfully.');
+        logger.info('Database connection established successfully.');
         app.listen(port, () => {
-            console.log(`Server listening on port ${port}`);
+            logger.info(`Server listening on port ${port}`);
         });
     })
     .catch((error) => {
-        console.error('Database connection error:', error);
+        logger.error('Database connection error:', error);
         app.listen(port, () => {
-            console.log(`Server listening on port ${port}`);
+            logger.info(`Server listening on port ${port}`);
         });
     });
 

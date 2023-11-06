@@ -53,6 +53,7 @@ controller.deleteAssignmentById = async (assignmentId, token) => {
     const assignment = await Assignment.findByPk(assignmentId);
 
     if (!assignment) {
+        logger.error(`Error fetching the requested assignment: ${error.message}`);
         throw new Error('Assignment not found');
     }
 
