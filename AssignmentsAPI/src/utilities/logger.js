@@ -1,36 +1,35 @@
-const path = require('path');
-const { createLogger, format, transports } = require('winston');
-require('winston-daily-rotate-file');
-
-const logFormat = format.printf(({ level, message, timestamp }) => {
-    return `${timestamp} ${level}: ${message}`;
-});
-
-const dailyRotateFileTransport = new transports.DailyRotateFile({
-    filename: path.join(__dirname, '..', '..', 'logs', 'webapp-AssignmentsAPI-%DATE%.log'),
-    datePattern: 'YYYY-MM-DD',
+const winston = require('winston');
+const winstonCloudWatch = require('winston-cloudwatch');
+ 
+var options = {
+  console: {
     level: 'debug',
+    handleExceptions: true,
+    json: false,
+    colorize: true,
+    timestamp: true,
+  },
+};
+ 
+const logger = winston.createLogger({
+  transports: [
+    new winston.transports.Console(options.console),
+    new winstonCloudWatch({
+      logGroupName: 'csye6225',
+      logStreamName: 'webapp',
+      awsRegion: 'us-east-2',
+      retentionInDays: 1,
+    }),
+  ],
+  exitOnError: false,
 });
-
-const logger = createLogger({
-    format: format.combine(
-        format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss',
-        }),
-        logFormat
-    ),
-    transports: [
-        dailyRotateFileTransport,
-        new transports.Console({
-            level: 'debug',
-            format: format.combine(
-                format.colorize(),
-                format.printf(
-                    info => `${info.timestamp} ${info.level}: ${info.message}`
-                )
-            ),
-        }),
-    ],
-});
-
+ 
+logger.level = 'silly';
+ 
+logger.stream = {
+  write: function (message, encoding) {
+    logger.info(message);
+  },
+};
+ 
 module.exports = logger;

@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
     }
 
     res.status(200).set(headers).end();
-
+    logger.info('Health check - success');
 });
 
 router.all('/', (req, res) => {

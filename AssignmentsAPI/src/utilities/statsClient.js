@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const client = new StatsD({
-  host: process.env.DB_HOST,
+  host: '127.0.0.1',
   port: 8125,
 });
 
