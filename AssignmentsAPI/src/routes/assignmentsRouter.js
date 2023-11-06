@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/controller');
+const statsdClient = require('../utilities/statsClient');
 const {
     extractBasicAuthCredentials,
     authenticateUser,
@@ -8,6 +9,7 @@ const {
 } = require('../utilities/auth');
 
 router.get('/', async (req, res, next) => {
+    statsdClient.increment('assignment.get_all.call_count');
     try {
         if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
             throw new Error('Bad Request');
@@ -20,6 +22,8 @@ router.get('/', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
+    statsdClient.increment('assignment.create.call_count');
+
     const authorizationHeader = req.headers.authorization;
 
     try {
@@ -59,6 +63,8 @@ router.post('/', async (req, res, next) => {
 });
 
 router.get('/:id', async (req, res, next) => {
+    statsdClient.increment('assignment.get_by_id.call_count');
+
     const assignmentId = req.params.id;
     try {
         if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
@@ -88,6 +94,8 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.delete('/:id', async (req, res, next) => {
+    statsdClient.increment('assignment.delete.call_count');
+
     const assignmentId = req.params.id;
     const token = req.headers.authorization;
 
@@ -101,6 +109,8 @@ router.delete('/:id', async (req, res, next) => {
 });
 
 router.put('/:id', async (req, res, next) => {
+    statsdClient.increment('assignment.update.call_count');
+
     const assignmentId = req.params.id;
     const assignmentData = req.body;
     const token = req.headers.authorization;
@@ -128,6 +138,8 @@ router.put('/:id', async (req, res, next) => {
 });
 
 router.patch('/:id', (req, res) => {
+    statsdClient.increment('assignment.patch.call_count');
+
     throw new Error('Method Not Allowed');
 });
 

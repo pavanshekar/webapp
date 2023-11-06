@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const statsdClient = require('../utilities/statsClient');
 
 const headers = {
     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -8,6 +9,7 @@ const headers = {
 };
 
 router.get('/', async (req, res) => {
+    statsdClient.increment('health.check.call_count');
 
     if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
         return res.status(400).set(headers).end();
@@ -18,6 +20,8 @@ router.get('/', async (req, res) => {
 });
 
 router.all('/', (req, res) => {
+    statsdClient.increment('health.method_not_allowed.call_count');
+    
     res.status(405).set(headers).end();
 });
 
