@@ -9,6 +9,7 @@ const logFormat = format.printf(({ level, message, timestamp }) => {
 const dailyRotateFileTransport = new transports.DailyRotateFile({
     filename: path.join(__dirname, '..', '..', 'logs', 'webapp-AssignmentsAPI-%DATE%.log'),
     datePattern: 'YYYY-MM-DD',
+    level: 'debug',
 });
 
 const logger = createLogger({
