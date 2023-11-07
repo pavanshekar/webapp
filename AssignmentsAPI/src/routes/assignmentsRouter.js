@@ -10,11 +10,9 @@ const {
 
 router.get('/', async (req, res, next) => {
     statsdClient.increment('assignment.get_all.call_count');
-    logger.debug('Fetching all assignments');
 
     try {
         if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
-            logger.error('Bad Request: Query parameters or body not allowed');
             throw new Error('Bad Request');
         }
         const response = await controller.getAllAssignments();
@@ -23,14 +21,12 @@ router.get('/', async (req, res, next) => {
 
         res.status(200).json(response);
     } catch (error) {
-        logger.error(`Error fetching all assignments: ${error.message}`);
         next(error);
     }
 });
 
 router.post('/', async (req, res, next) => {
     statsdClient.increment('assignment.create.call_count');
-    logger.debug('Creating a new assignment');
 
     const authorizationHeader = req.headers.authorization;
 
@@ -40,7 +36,6 @@ router.post('/', async (req, res, next) => {
         const user = await authenticateUser(email, password);
 
         if (!user) {
-            logger.error('Authentication failed');
             return res.status(401).end();
         }
 
@@ -50,7 +45,6 @@ router.post('/', async (req, res, next) => {
         const extraFields = requestBodyKeys.filter(field => !expectedFields.includes(field));
 
         if (extraFields.length > 0) {
-            logger.error('Bad Request: Extra fields in request');
             return res.status(400).end();
         }
 
@@ -70,26 +64,22 @@ router.post('/', async (req, res, next) => {
 
         res.status(201).json(response);
     } catch (error) {
-        logger.error(`Error creating assignment: ${error.message}`);
         next(error);
     }
 });
 
 router.get('/:id', async (req, res, next) => {
     statsdClient.increment('assignment.get_by_id.call_count');
-    logger.debug('Fetching the requested assignment');
 
     const assignmentId = req.params.id;
     try {
         if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
-            logger.error('Bad Request: Query parameters or body not allowed');
             throw new Error('Bad Request');
         }
 
         const assignment = await controller.getAssignmentById(assignmentId);
 
         if (!assignment) {
-            logger.error(`Error fetching the requested assignment: ${error.message}`);
             throw new Error('Assignment not found');
         }
 
@@ -107,38 +97,29 @@ router.get('/:id', async (req, res, next) => {
 
         res.status(200).json(response);
     } catch (error) {
-        logger.error(`Error fetching the requested assignment: ${error.message}`);
         next(error);
     }
 });
 
 router.delete('/:id', async (req, res, next) => {
     statsdClient.increment('assignment.delete.call_count');
-    logger.debug('Deleting the assignment');
 
     const assignmentId = req.params.id;
     const token = req.headers.authorization;
 
     try {
-        if (Object.keys(req.body).length > 0) {
-            logger.error('Bad Request: Body not allowed');
-            throw new Error('Bad Request');
-        }
-
         await controller.deleteAssignmentById(assignmentId, token);
 
         logger.info('Assignment deleted');
 
         res.status(204).send();
     } catch (error) {
-        logger.error(`Error deleting the assignment: ${error.message}`);
         next(error);
     }
 });
 
 router.put('/:id', async (req, res, next) => {
     statsdClient.increment('assignment.update.call_count');
-    logger.debug('Updating the assignment');
 
     const assignmentId = req.params.id;
     const assignmentData = req.body;
@@ -151,14 +132,12 @@ router.put('/:id', async (req, res, next) => {
         const extraFields = requestBodyKeys.filter(field => !expectedFields.includes(field));
 
         if (extraFields.length > 0) {
-            logger.error('Bad Request: Extra fields in request');
             return res.status(400).end();
         }
 
         const assignment = await controller.updateAssignment(assignmentId, assignmentData, token);
 
         if (!assignment) {
-            logger.error(`Error fetching the requested assignment: ${error.message}`);
             throw new Error('Assignment not found');
         }
 
@@ -166,14 +145,12 @@ router.put('/:id', async (req, res, next) => {
 
         res.status(204).send();
     } catch (error) {
-        logger.error(`Error updating the assignment: ${error.message}`);
         next(error);
     }
 });
 
 router.patch('/:id', (req, res) => {
     statsdClient.increment('assignment.patch.call_count');
-    logger.error('Method not allowed for assignments');
 
     throw new Error('Method Not Allowed');
 });

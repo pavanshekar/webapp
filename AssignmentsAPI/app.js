@@ -23,7 +23,7 @@ app.use(async (req, res, next) => {
         await sequelize.authenticate();
         next();
     } catch (error) {
-        logger.error('Database connection error:', error);
+        logger.error('Database connection error');
         res.status(503).send();
     }
 });
@@ -42,7 +42,7 @@ sequelize
         });
     })
     .catch((error) => {
-        logger.error('Database connection error:', error);
+        logger.error('Database connection error');
         app.listen(port, () => {
             logger.info(`Server listening on port ${port}`);
         });
