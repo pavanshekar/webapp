@@ -30,13 +30,19 @@ sudo chmod -R 755 /opt/AssignmentsAPI/AssignmentsAPI/
 
 sudo -u csye6225 npm install
 
-sudo apt-get install -y wget
-sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb
-sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
-
 sudo mv /tmp/amazon-cloudwatch-agent.json /opt/aws/amazon-cloudwatch-agent/etc/
 
 sudo cp /tmp/assignments-api.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl start assignments-api
 sudo systemctl enable assignments-api
+
+sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i amazon-cloudwatch-agent.deb || sudo apt-get install -y -f
+
+sudo mv /tmp/amazon-cloudwatch-agent.json /opt/aws/amazon-cloudwatch-agent.json
+sudo chown -R csye6225:csye6225 /opt/aws/amazon-cloudwatch-agent.json
+sudo chmod -R 755 /opt/aws/amazon-cloudwatch-agent.json
+
+sudo systemctl start amazon-cloudwatch-agent
+sudo systemctl enable amazon-cloudwatch-agent
