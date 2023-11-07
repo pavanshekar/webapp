@@ -11,8 +11,10 @@ const headers = {
 
 router.get('/', async (req, res) => {
     statsdClient.increment('health.check.call_count');
+    logger.debug('Health check performed');
 
     if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
+        logger.error('Health check - bad request');
         return res.status(400).set(headers).end();
     }
 
@@ -22,6 +24,7 @@ router.get('/', async (req, res) => {
 
 router.all('/', (req, res) => {
     statsdClient.increment('health.method_not_allowed.call_count');
+    logger.error('Method not allowed for health check');
     
     res.status(405).set(headers).end();
 });
