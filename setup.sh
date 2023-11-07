@@ -10,10 +10,6 @@ sudo apt-get install -y nodejs
 
 sudo apt install -y unzip
 
-sudo mkdir -p /var/log/csye6225-logs
-sudo chown csye6225:csye6225 /var/log/csye6225-logs
-sudo chmod 755 /var/log/csye6225-logs
-
 sudo mkdir -p /opt/AssignmentsAPI
 sudo unzip /tmp/app.zip -d /opt/AssignmentsAPI
 
