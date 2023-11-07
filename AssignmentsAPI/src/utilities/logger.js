@@ -3,11 +3,8 @@ const winstonCloudWatch = require('winston-cloudwatch');
 const fs = require('fs');
 const path = require('path');
 
-const logDir = '/var/log'; 
+const logDir = '/var/log/csye6225-logs'; 
 const logFilePath = path.join(logDir, 'csye6225.log'); 
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
 
 const fileFormat = winston.format.combine(
   winston.format.timestamp({
