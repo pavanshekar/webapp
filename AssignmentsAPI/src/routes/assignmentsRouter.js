@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
 
     try {
         if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
-            logger.error('Bad Request: Query parameters or body not allowed');
+            logger.warn('Bad Request: Query parameters or body not allowed');
             throw new Error('Bad Request');
         }
         const response = await controller.getAllAssignments();
@@ -51,7 +51,7 @@ router.post('/', async (req, res, next) => {
         const extraFields = requestBodyKeys.filter(field => !expectedFields.includes(field));
 
         if (extraFields.length > 0) {
-            logger.error('Bad Request: Extra fields in request');
+            logger.warn('Bad Request: Extra fields in request');
             return res.status(400).end();
         }
 
@@ -83,7 +83,7 @@ router.get('/:id', async (req, res, next) => {
     const assignmentId = req.params.id;
     try {
         if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
-            logger.error('Bad Request: Query parameters or body not allowed');
+            logger.warn('Bad Request: Query parameters or body not allowed');
             throw new Error('Bad Request');
         }
 
@@ -122,7 +122,7 @@ router.delete('/:id', async (req, res, next) => {
 
     try {
         if (Object.keys(req.body).length > 0) {
-            logger.error('Bad Request: Body not allowed');
+            logger.warn('Bad Request: Body not allowed');
             throw new Error('Bad Request');
         }
 
@@ -152,7 +152,7 @@ router.put('/:id', async (req, res, next) => {
         const extraFields = requestBodyKeys.filter(field => !expectedFields.includes(field));
 
         if (extraFields.length > 0) {
-            logger.error('Bad Request: Extra fields in request');
+            logger.warn('Bad Request: Extra fields in request');
             return res.status(400).end();
         }
 
@@ -174,7 +174,7 @@ router.put('/:id', async (req, res, next) => {
 
 router.patch('/:id', (req, res) => {
     statsdClient.increment('assignment.patch.call_count');
-    logger.error('Method not allowed for assignments');
+    logger.warn('Method not allowed for assignments');
 
     throw new Error('Method Not Allowed');
 });
