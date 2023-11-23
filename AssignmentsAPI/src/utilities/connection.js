@@ -100,7 +100,12 @@ const UserAssignment = sequelize.define('UserAssignment', {
     assignmentId: {
         type: DataTypes.UUID,
         allowNull: false,
-      },
+    },
+    submissionCount: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    },
     authToken: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -109,6 +114,36 @@ const UserAssignment = sequelize.define('UserAssignment', {
 
 UserAssignment.belongsTo(User, { foreignKey: 'userId' });
 UserAssignment.belongsTo(Assignment, { foreignKey: 'assignmentId' });
+
+const Submission = sequelize.define('Submission', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
+    assignment_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+    },
+    submission_url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    submission_date: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: false,
+    },
+    submission_updated: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: false,
+    }
+}, {
+    timestamps: false
+});
+
+Submission.belongsTo(Assignment, { foreignKey: 'assignment_id' });
 
 const loadUserAccounts = async () => {
     try {
@@ -152,4 +187,4 @@ sequelize
         console.error('Database synchronization error:', error);
     });
 
-module.exports = { sequelize, User, Assignment, UserAssignment };
+module.exports = { sequelize, User, Assignment, UserAssignment, Submission };

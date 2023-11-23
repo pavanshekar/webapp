@@ -179,4 +179,26 @@ router.patch('/:id', (req, res) => {
     throw new Error('Method Not Allowed');
 });
 
+router.post('/:id/submission', async (req, res, next) => {
+    statsdClient.increment('assignment.submission.call_count');
+    logger.debug('Submitting the assignment');
+
+    const assignmentId = req.params.id;
+    const token = req.headers.authorization;
+    const { submission_url } = req.body;
+
+    if (Object.keys(req.body).length !== 1) {
+        return res.status(400).end();
+    }
+
+    try {
+        const submissionResponse = await controller.handleSubmission(assignmentId, token, submission_url);
+        logger.info('Assignment submitted');
+        res.status(201).json(submissionResponse);
+    } catch (error) {
+        logger.error(`Error submitting the assignment: ${error.message}`);
+        next(error);
+    }
+});
+
 module.exports = router;

@@ -1,5 +1,9 @@
-const { Assignment, UserAssignment } = require('../utilities/connection');
-const { authenticateUserByToken } = require('../utilities/auth');
+const { User, Assignment, UserAssignment, Submission } = require('../utilities/connection');
+const { extractBasicAuthCredentials, authenticateUserByToken } = require('../utilities/auth');
+const dotenv = require('dotenv');
+const AWS = require('aws-sdk');
+
+dotenv.config();
 
 let controller = {};
 
@@ -45,29 +49,43 @@ controller.createAssignment = async (assignmentData) => {
 };
 
 controller.getAssignmentById = async (assignmentId) => {
-    const assignment = await Assignment.findByPk(assignmentId);
-    return assignment;
+    try {
+        const assignment = await Assignment.findByPk(assignmentId);
+        if (!assignment) {
+            logger.error(`Error fetching the requested assignment: ${error.message}`);
+            throw new Error('Assignment not found');
+        }
+        return assignment;
+    }
+    catch (error) {
+        throw error;
+    }
 };
 
 controller.deleteAssignmentById = async (assignmentId, token) => {
-    const assignment = await Assignment.findByPk(assignmentId);
+    try {
+        const assignment = await Assignment.findByPk(assignmentId);
 
-    if (!assignment) {
-        logger.error(`Error fetching the requested assignment: ${error.message}`);
-        throw new Error('Assignment not found');
+        if (!assignment) {
+            logger.error(`Error fetching the requested assignment: ${error.message}`);
+            throw new Error('Assignment not found');
+        }
+
+        await authenticateUserByToken(token, assignmentId);
+
+        const userAssignment = await UserAssignment.findOne({ where: { assignmentId: assignmentId } });
+
+        if (!userAssignment) {
+            throw new Error('Assignment not found');
+        }
+
+        await userAssignment.destroy();
+
+        await assignment.destroy();
     }
-
-    await authenticateUserByToken(token, assignmentId);
-
-    const userAssignment = await UserAssignment.findOne({ where: { assignmentId: assignmentId } });
-
-    if (!userAssignment) {
-        throw new Error('Assignment not found');
+    catch (error) {
+        throw error;
     }
-
-    await userAssignment.destroy();
-
-    await assignment.destroy();
 };
 
 controller.updateAssignment = async (assignmentId, assignmentData, token) => {
@@ -106,5 +124,76 @@ controller.storeAuthToken = async (userId, assignmentId, authToken) => {
         authToken,
     });
 };
+
+controller.handleSubmission = async (assignmentId, token, submission_url) => {
+    try {
+        // const { email, password } = extractBasicAuthCredentials(token);
+        const userId = await authenticateUserByToken(token, assignmentId);
+
+        if (!userId) {
+            throw new Error('Invalid Credentials');
+        }
+
+        const assignment = await Assignment.findByPk(assignmentId);
+        if (!assignment) {
+            throw new Error('Assignment not found');
+        }
+
+        const now = new Date();
+        const deadline = new Date(assignment.deadline);
+        if (now > deadline) {
+            throw new Error('Forbidden');
+        }
+
+        const userAssignment = await UserAssignment.findOne({
+            where: {
+                userId: userId, 
+                assignmentId: assignmentId
+            }
+        });
+
+        if (!userAssignment) {
+            throw new Error('Assignment not found');
+        }
+
+        if (userAssignment.submissionCount >= assignment.num_of_attempts) {
+            throw new Error('Forbidden');
+        }
+
+        userAssignment.submissionCount += 1;
+        await userAssignment.save();
+
+        const submission = await Submission.create({
+            assignment_id: assignmentId,
+            submission_url: submission_url
+        });
+
+        const user = await User.findByPk(userId);
+
+        const sns = new AWS.SNS();
+        const message = {
+            submissionUrl: submission.submission_url,
+            userEmail: user.email
+        };
+
+        const params = {
+            Message: JSON.stringify(message),
+            TopicArn: process.env.SNS_TOPIC_ARN
+        };
+
+        await sns.publish(params).promise();
+
+        return {
+            id: submission.id,
+            assignment_id: assignmentId,
+            submission_url: submission.submission_url,
+            submission_date: submission.submission_date.toISOString(),
+            submission_updated: submission.submission_updated.toISOString()
+        };
+    } catch (error) {
+        throw error;
+    }
+};
+
 
 module.exports = controller;
