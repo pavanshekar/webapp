@@ -170,6 +170,8 @@ controller.handleSubmission = async (assignmentId, token, submission_url) => {
 
         const user = await User.findByPk(userId);
 
+        AWS.config.update({ region: process.env.AWS_REGION });
+
         const sns = new AWS.SNS();
         const message = {
             submissionUrl: submission.submission_url,
