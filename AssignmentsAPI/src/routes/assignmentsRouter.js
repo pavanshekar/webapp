@@ -90,7 +90,6 @@ router.get('/:id', async (req, res, next) => {
         const assignment = await controller.getAssignmentById(assignmentId);
 
         if (!assignment) {
-            logger.error(`Error fetching the requested assignment: ${error.message}`);
             throw new Error('Assignment not found');
         }
 
@@ -159,7 +158,6 @@ router.put('/:id', async (req, res, next) => {
         const assignment = await controller.updateAssignment(assignmentId, assignmentData, token);
 
         if (!assignment) {
-            logger.error(`Error fetching the requested assignment: ${error.message}`);
             throw new Error('Assignment not found');
         }
 

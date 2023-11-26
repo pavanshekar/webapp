@@ -52,7 +52,6 @@ controller.getAssignmentById = async (assignmentId) => {
     try {
         const assignment = await Assignment.findByPk(assignmentId);
         if (!assignment) {
-            logger.error(`Error fetching the requested assignment: ${error.message}`);
             throw new Error('Assignment not found');
         }
         return assignment;
@@ -67,7 +66,6 @@ controller.deleteAssignmentById = async (assignmentId, token) => {
         const assignment = await Assignment.findByPk(assignmentId);
 
         if (!assignment) {
-            logger.error(`Error fetching the requested assignment: ${error.message}`);
             throw new Error('Assignment not found');
         }
 
@@ -127,7 +125,6 @@ controller.storeAuthToken = async (userId, assignmentId, authToken) => {
 
 controller.handleSubmission = async (assignmentId, token, submission_url) => {
     try {
-        // const { email, password } = extractBasicAuthCredentials(token);
         const userId = await authenticateUserByToken(token, assignmentId);
 
         if (!userId) {
