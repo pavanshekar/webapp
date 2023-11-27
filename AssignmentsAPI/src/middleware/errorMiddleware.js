@@ -7,7 +7,7 @@ module.exports = (err, req, res, next) => {
         res.status(401).send();
     } else if (err.message === 'Forbidden') {
         res.status(403).send();
-    } else if (err.message === 'Assignment not found') {
+    } else if (err.message === 'Assignment not found' || err.message === 'Not Found') {
         res.status(404).send();
     } else if (err.message === 'Method Not Allowed') {
         res.status(405).send();
