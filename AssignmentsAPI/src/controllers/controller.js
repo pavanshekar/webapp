@@ -139,7 +139,7 @@ controller.handleSubmission = async (assignmentId, token, submission_url) => {
         const now = new Date();
         const deadline = new Date(assignment.deadline);
         if (now > deadline) {
-            throw new Error('Forbidden');
+            throw new Error('Bad Request');
         }
 
         const userAssignment = await UserAssignment.findOne({
@@ -154,7 +154,7 @@ controller.handleSubmission = async (assignmentId, token, submission_url) => {
         }
 
         if (userAssignment.submissionCount >= assignment.num_of_attempts) {
-            throw new Error('Forbidden');
+            throw new Error('Bad Request');
         }
 
         userAssignment.submissionCount += 1;
