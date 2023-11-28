@@ -182,15 +182,25 @@ router.post('/:id/submission', async (req, res, next) => {
     logger.debug('Submitting the assignment');
 
     const assignmentId = req.params.id;
-    const token = req.headers.authorization;
+    const authorizationHeader = req.headers.authorization;
     const { submission_url } = req.body;
 
-    if (Object.keys(req.body).length !== 1) {
-        return res.status(400).end();
-    }
-
     try {
-        const submissionResponse = await controller.handleSubmission(assignmentId, token, submission_url);
+        const { email, password } = extractBasicAuthCredentials(authorizationHeader);
+
+        const user = await authenticateUser(email, password);
+
+        if (!user) {
+            logger.error('Authentication failed');
+            return res.status(401).end();
+        }
+
+        if (Object.keys(req.body).length !== 1) {
+            logger.warn('Bad Request: Extra fields in request');
+            return res.status(400).end();
+        }
+        
+        const submissionResponse = await controller.handleSubmission(assignmentId, user.userId, submission_url);
         logger.info('Assignment submitted');
         res.status(201).json(submissionResponse);
     } catch (error) {

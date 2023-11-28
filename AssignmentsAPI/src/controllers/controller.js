@@ -125,14 +125,8 @@ controller.storeAuthToken = async (userId, assignmentId, authToken) => {
     });
 };
 
-controller.handleSubmission = async (assignmentId, token, submission_url) => {
+controller.handleSubmission = async (assignmentId, userId, submission_url) => {
     try {
-        const userId = await authenticateUserByToken(token, assignmentId);
-
-        if (!userId) {
-            throw new Error('Invalid Credentials');
-        }
-
         const assignment = await Assignment.findByPk(assignmentId);
         if (!assignment) {
             throw new Error('Assignment not found');
@@ -141,12 +135,11 @@ controller.handleSubmission = async (assignmentId, token, submission_url) => {
         const now = new Date();
         const deadline = new Date(assignment.deadline);
         if (now > deadline) {
-            throw new Error('Bad Request');
+            throw new Error('Forbidden');
         }
 
         const userAssignment = await UserAssignment.findOne({
             where: {
-                userId: userId, 
                 assignmentId: assignmentId
             }
         });
@@ -156,7 +149,7 @@ controller.handleSubmission = async (assignmentId, token, submission_url) => {
         }
 
         if (userAssignment.submissionCount >= assignment.num_of_attempts) {
-            throw new Error('Bad Request');
+            throw new Error('Forbidden');
         }
 
         userAssignment.submissionCount += 1;
@@ -195,6 +188,5 @@ controller.handleSubmission = async (assignmentId, token, submission_url) => {
         throw error;
     }
 };
-
 
 module.exports = controller;
