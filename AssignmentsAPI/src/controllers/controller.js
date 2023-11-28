@@ -77,6 +77,8 @@ controller.deleteAssignmentById = async (assignmentId, token) => {
             throw new Error('Assignment not found');
         }
 
+        await Submission.destroy({ where: { assignment_id: assignmentId } });
+
         await userAssignment.destroy();
 
         await assignment.destroy();
