@@ -167,7 +167,8 @@ controller.handleSubmission = async (assignmentId, userId, submission_url) => {
         const sns = new AWS.SNS();
         const message = {
             submissionUrl: submission.submission_url,
-            userEmail: user.email
+            userEmail: user.email,
+            userName: user.first_name
         };
 
         const params = {
