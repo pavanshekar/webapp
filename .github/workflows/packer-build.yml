@@ -82,7 +82,7 @@ jobs:
 
     - name: Fetch Launch Template ID for Dev
       run: |
-        DEV_LAUNCH_TEMPLATE_ID=$(aws ec2 describe-launch-templates --filters "Name=launch-template-name,Values=<DEV_LAUNCH_TEMPLATE_NAME>" --query 'LaunchTemplates[0].LaunchTemplateId' --output text)
+        DEV_LAUNCH_TEMPLATE_ID=$(aws ec2 describe-launch-templates --query 'LaunchTemplates[?contains(LaunchTemplateName,`appLaunchTemplate`) == `true`].LaunchTemplateId' --output text)
         if [ -z "$DEV_LAUNCH_TEMPLATE_ID" ] || [ "$DEV_LAUNCH_TEMPLATE_ID" == "None" ]; then
           echo "DEV_LAUNCH_TEMPLATE_ID=NotFound" >> $GITHUB_ENV
         else
@@ -91,7 +91,7 @@ jobs:
 
     - name: Fetch Auto-Scaling Group Name for Dev
       run: |
-        DEV_AUTOSCALING_GROUP_NAME=$(aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?contains(AutoScalingGroupName,`<DEV_AUTOSCALING_GROUP_PART>`)].AutoScalingGroupName' --output text)
+        DEV_AUTOSCALING_GROUP_NAME=$(aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?contains(AutoScalingGroupName,`autoScalingGroup`) == `true`].AutoScalingGroupName' --output text)
         if [ -z "$DEV_AUTOSCALING_GROUP_NAME" ] || [ "$DEV_AUTOSCALING_GROUP_NAME" == "None" ]; then
           echo "DEV_AUTOSCALING_GROUP_NAME=NotFound" >> $GITHUB_ENV
         else
@@ -135,7 +135,7 @@ jobs:
 
     - name: Fetch Launch Template ID for Demo
       run: |
-        DEMO_LAUNCH_TEMPLATE_ID=$(aws ec2 describe-launch-templates --filters "Name=launch-template-name,Values=<DEMO_LAUNCH_TEMPLATE_NAME>" --query 'LaunchTemplates[0].LaunchTemplateId' --output text)
+        DEMO_LAUNCH_TEMPLATE_ID=$(aws ec2 describe-launch-templates --query 'LaunchTemplates[?contains(LaunchTemplateName,`appLaunchTemplate`) == `true`].LaunchTemplateId' --output text)
         if [ -z "$DEMO_LAUNCH_TEMPLATE_ID" ] || [ "$DEMO_LAUNCH_TEMPLATE_ID" == "None" ]; then
           echo "DEMO_LAUNCH_TEMPLATE_ID=NotFound" >> $GITHUB_ENV
         else
@@ -144,7 +144,7 @@ jobs:
 
     - name: Fetch Auto-Scaling Group Name for Demo
       run: |
-        DEMO_AUTOSCALING_GROUP_NAME=$(aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?contains(AutoScalingGroupName,`<DEMO_AUTOSCALING_GROUP_PART>`)].AutoScalingGroupName' --output text)
+        DEMO_AUTOSCALING_GROUP_NAME=$(aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?contains(AutoScalingGroupName,`autoScalingGroup`) == `true`].AutoScalingGroupName' --output text)
         if [ -z "$DEMO_AUTOSCALING_GROUP_NAME" ] || [ "$DEMO_AUTOSCALING_GROUP_NAME" == "None" ]; then
           echo "DEMO_AUTOSCALING_GROUP_NAME=NotFound" >> $GITHUB_ENV
         else
