@@ -24,7 +24,7 @@ jobs:
     - name: Create .env
       run: |
         echo PORT=${{ secrets.PORT }} >> .env
-        echo DB_HOST={{ secrets.DB_HOST }} >> .env
+        echo DB_HOST=${{ secrets.DB_HOST }} >> .env
         echo DB_PORT=${{ secrets.DB_PORT }} >> .env
         echo DB_USER=${{ secrets.DB_USER }} >> .env
         echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
@@ -72,4 +72,111 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
         AMI_ID: ${{ env.AMI_ID }}
+
+    - name: Configure AWS Credentials for Dev
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Fetch Launch Template ID for Dev
+      run: |
+        DEV_LAUNCH_TEMPLATE_ID=$(aws ec2 describe-launch-templates --filters "Name=launch-template-name,Values=<DEV_LAUNCH_TEMPLATE_NAME>" --query 'LaunchTemplates[0].LaunchTemplateId' --output text)
+        if [ -z "$DEV_LAUNCH_TEMPLATE_ID" ] || [ "$DEV_LAUNCH_TEMPLATE_ID" == "None" ]; then
+          echo "DEV_LAUNCH_TEMPLATE_ID=NotFound" >> $GITHUB_ENV
+        else
+          echo "DEV_LAUNCH_TEMPLATE_ID=$DEV_LAUNCH_TEMPLATE_ID" >> $GITHUB_ENV
+        fi
+
+    - name: Fetch Auto-Scaling Group Name for Dev
+      run: |
+        DEV_AUTOSCALING_GROUP_NAME=$(aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?contains(AutoScalingGroupName,`<DEV_AUTOSCALING_GROUP_PART>`)].AutoScalingGroupName' --output text)
+        if [ -z "$DEV_AUTOSCALING_GROUP_NAME" ] || [ "$DEV_AUTOSCALING_GROUP_NAME" == "None" ]; then
+          echo "DEV_AUTOSCALING_GROUP_NAME=NotFound" >> $GITHUB_ENV
+        else
+          echo "DEV_AUTOSCALING_GROUP_NAME=$DEV_AUTOSCALING_GROUP_NAME" >> $GITHUB_ENV
+        fi
+
+    - name: Create New Launch Template Version for Dev
+      if: env.DEV_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEV_AUTOSCALING_GROUP_NAME != 'NotFound'
+      run: |
+        DEV_LT_VERSION=$(aws ec2 create-launch-template-version --launch-template-id ${{ env.DEV_LAUNCH_TEMPLATE_ID }} --source-version '$Latest' --launch-template-data '{"ImageId": "${{ env.AMI_ID }}"}' --query 'LaunchTemplateVersion.VersionNumber' --output text)
+        echo "DEV_LT_VERSION=$DEV_LT_VERSION" >> $GITHUB_ENV
+
+    - name: Refresh Dev Auto-Scaling Group
+      if: env.DEV_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEV_AUTOSCALING_GROUP_NAME != 'NotFound'
+      run: |
+        aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ env.DEV_AUTOSCALING_GROUP_NAME }} --launch-template '{"Version": "${{ env.DEV_LT_VERSION }}"}'
+
+    - name: Wait for Dev Instance Refresh
+      if: env.DEV_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEV_AUTOSCALING_GROUP_NAME != 'NotFound'
+      run: |
+        while :; do
+          DEV_STATUS=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{ env.DEV_AUTOSCALING_GROUP_NAME }} --query 'InstanceRefreshes[0].Status' --output text)
+          if [[ $DEV_STATUS == "Successful" ]]; then
+            echo "Dev instance refresh completed successfully"
+            break
+          elif [[ $DEV_STATUS == "Failed" ]]; then
+            echo "Dev instance refresh failed"
+            exit 1
+          else
+            echo "Waiting for dev instance refresh..."
+            sleep 30
+          fi
+        done
+
+    - name: Configure AWS Credentials for Demo
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.DEMO_AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.DEMO_AWS_SECRET_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Fetch Launch Template ID for Demo
+      run: |
+        DEMO_LAUNCH_TEMPLATE_ID=$(aws ec2 describe-launch-templates --filters "Name=launch-template-name,Values=<DEMO_LAUNCH_TEMPLATE_NAME>" --query 'LaunchTemplates[0].LaunchTemplateId' --output text)
+        if [ -z "$DEMO_LAUNCH_TEMPLATE_ID" ] || [ "$DEMO_LAUNCH_TEMPLATE_ID" == "None" ]; then
+          echo "DEMO_LAUNCH_TEMPLATE_ID=NotFound" >> $GITHUB_ENV
+        else
+          echo "DEMO_LAUNCH_TEMPLATE_ID=$DEMO_LAUNCH_TEMPLATE_ID" >> $GITHUB_ENV
+        fi
+
+    - name: Fetch Auto-Scaling Group Name for Demo
+      run: |
+        DEMO_AUTOSCALING_GROUP_NAME=$(aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?contains(AutoScalingGroupName,`<DEMO_AUTOSCALING_GROUP_PART>`)].AutoScalingGroupName' --output text)
+        if [ -z "$DEMO_AUTOSCALING_GROUP_NAME" ] || [ "$DEMO_AUTOSCALING_GROUP_NAME" == "None" ]; then
+          echo "DEMO_AUTOSCALING_GROUP_NAME=NotFound" >> $GITHUB_ENV
+        else
+          echo "DEMO_AUTOSCALING_GROUP_NAME=$DEMO_AUTOSCALING_GROUP_NAME" >> $GITHUB_ENV
+        fi
+
+    - name: Create New Launch Template Version for Demo
+      if: env.DEMO_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEMO_AUTOSCALING_GROUP_NAME != 'NotFound'
+      run: |
+        DEMO_LT_VERSION=$(aws ec2 create-launch-template-version --launch-template-id ${{ env.DEMO_LAUNCH_TEMPLATE_ID }} --source-version '$Latest' --launch-template-data '{"ImageId": "${{ env.AMI_ID }}"}' --query 'LaunchTemplateVersion.VersionNumber' --output text)
+        echo "DEMO_LT_VERSION=$DEMO_LT_VERSION" >> $GITHUB_ENV
+
+    - name: Refresh Demo Auto-Scaling Group
+      if: env.DEMO_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEMO_AUTOSCALING_GROUP_NAME != 'NotFound'
+      run: |
+        aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ env.DEMO_AUTOSCALING_GROUP_NAME }} --launch-template '{"Version": "${{ env.DEMO_LT_VERSION }}"}'
+
+    - name: Wait for Demo Instance Refresh
+      if: env.DEMO_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEMO_AUTOSCALING_GROUP_NAME != 'NotFound'
+      run: |
+        while :; do
+          DEMO_STATUS=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{ env.DEMO_AUTOSCALING_GROUP_NAME }} --query 'InstanceRefreshes[0].Status' --output text)
+          if [[ $DEMO_STATUS == "Successful" ]]; then
+            echo "Demo instance refresh completed successfully"
+            break
+          elif [[ $DEMO_STATUS == "Failed" ]]; then
+            echo "Demo instance refresh failed"
+            exit 1
+          else
+            echo "Waiting for demo instance refresh..."
+            sleep 30
+          fi
+        done
+
 
