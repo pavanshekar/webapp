@@ -107,7 +107,7 @@ jobs:
     - name: Refresh Dev Auto-Scaling Group
       if: env.DEV_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEV_AUTOSCALING_GROUP_NAME != 'NotFound'
       run: |
-        aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ env.DEV_AUTOSCALING_GROUP_NAME }} --launch-template '{"Version": "${{ env.DEV_LT_VERSION }}"}'
+        aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ env.DEV_AUTOSCALING_GROUP_NAME }}
 
     - name: Wait for Dev Instance Refresh
       if: env.DEV_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEV_AUTOSCALING_GROUP_NAME != 'NotFound'
@@ -160,7 +160,7 @@ jobs:
     - name: Refresh Demo Auto-Scaling Group
       if: env.DEMO_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEMO_AUTOSCALING_GROUP_NAME != 'NotFound'
       run: |
-        aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ env.DEMO_AUTOSCALING_GROUP_NAME }} --launch-template '{"Version": "${{ env.DEMO_LT_VERSION }}"}'
+        aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ env.DEMO_AUTOSCALING_GROUP_NAME }}
 
     - name: Wait for Demo Instance Refresh
       if: env.DEMO_LAUNCH_TEMPLATE_ID != 'NotFound' && env.DEMO_AUTOSCALING_GROUP_NAME != 'NotFound'
