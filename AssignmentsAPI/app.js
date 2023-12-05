@@ -30,7 +30,7 @@ app.use(async (req, res, next) => {
 
 app.use('/healthz', healthRouter);
 app.use(tokenMiddleware);
-app.use('/v1/assignments', assignmentsRouter);
+app.use('/demo/assignments', assignmentsRouter);
 app.use(errorMiddleware);
 
 sequelize
